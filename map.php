@@ -49,10 +49,13 @@
         </nav>
     </div>
     <div id="map"></div>
+    <div id="capture"></div>
     <input type="hidden" name="address" id="address" value="<?php echo $_POST["address"]; ?>">
     <script>
         var map;
-        var geocoder; 
+        var geocoder;
+        var infoWindow;
+        var kml = '../medikuSig/Mediku.kml'; 
 
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
@@ -62,6 +65,7 @@
             geocoder = new google.maps.Geocoder();
             geocodeAddress(geocoder, map);
             infowindow = new google.maps.InfoWindow();
+            loadKmlLayer(kml, map);
         }
 
         function geocodeAddress(geocoder, resultsMap) {
@@ -82,6 +86,20 @@
             }
         });
         }
+
+        function loadKmlLayer(src, map) {
+            var kmlLayer = new google.maps.KmlLayer(src, {
+              suppressInfoWindows: true,
+              preserveViewport: false,
+              map: map
+          });
+            google.maps.event.addListener(kmlLayer, 'click', function(event) {
+              var content = event.featureData.infoWindowHtml;
+              var testimonial = document.getElementById('capture');
+              testimonial.innerHTML = content;
+          });
+        }
+
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgDkjgoAZ7GbKexSSnDtIkBQUrLB6HHXw&callback=initMap"
     async defer></script>
